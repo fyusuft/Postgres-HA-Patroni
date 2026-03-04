@@ -1,0 +1,39 @@
+scope: pg-cluster
+namespace: /db/
+name: node2
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: 192.168.56.106:8008
+
+etcd3:
+  host: 192.168.56.107:2379
+
+bootstrap:
+  dcs:
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_level: replica
+        hot_standby: "on"
+        max_wal_senders: 10
+        max_replication_slots: 10
+        wal_keep_size: 2GB
+      pg_hba:
+        - host replication replication 192.168.56.105/32 trust
+        - host replication replication 127.0.0.1/32 trust
+        - host all all 0.0.0.0/0 md5
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: 192.168.56.106:5432
+  data_dir: /var/lib/postgresql/16/main
+  bin_dir: /usr/lib/postgresql/16/bin
+  authentication:
+    replication:
+      username: replication
+      password: Akuganteng
+    superuser:
+      username: postgres
+      password: Akuganteng
